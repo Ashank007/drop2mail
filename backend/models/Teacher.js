@@ -13,6 +13,7 @@ const teacherSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    password: { type: String, required: true },
   },
   { versionKey:false }
 );
