@@ -5,12 +5,15 @@ const collectionSchema = new mongoose.Schema({
   description: String,
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Teacher",
+    ref: "role",
     required: true,
   },
+  role: { type: String, enum: ["Teacher", "Admin"], required: true },
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
   isAdminCollection: { type: Boolean, default: false }, 
 }, { timestamps: true });
 
-export default mongoose.model("Collection", collectionSchema);
+const NewCollection = mongoose.model("Collection", collectionSchema);
+
+export default NewCollection;
 

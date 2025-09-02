@@ -7,12 +7,12 @@ import {
 } from "../controllers/collectionController.js";
 import { auth } from "../middleware/auth.js";
 
-const collectionRouter = express.Router();
+const CollectionRouter = express.Router();
 
-collectionRouter.post("/", auth, createCollection);
-collectionRouter.get("/my", auth, getMyCollections);
-collectionRouter.put("/:id", auth, updateCollection);
-collectionRouter.delete("/:id", auth, deleteCollection);
+CollectionRouter.post("/", auth, createCollection);
+CollectionRouter.get("/my", auth, getMyCollections);
+CollectionRouter.put("/:id", auth, updateCollection);
+CollectionRouter.delete("/:id", auth, deleteCollection);
 
-export default collectionRouter;
+export default CollectionRouter;
 

@@ -1,9 +1,9 @@
-import Collection from "../models/Collection.js";
+import NewCollection from "../models/Collections.js";
 
 export const createCollection = async (req, res) => {
   try {
     const { title, description } = req.body;
-    const collection = new Collection({
+    const collection = new NewCollection({
       title,
       description,
       createdBy: req.user.id,
@@ -17,7 +17,7 @@ export const createCollection = async (req, res) => {
 
 export const getMyCollections = async (req, res) => {
   try {
-    const collections = await Collection.find({ createdBy: req.user.id });
+    const collections = await NewCollection.find({ createdBy: req.user.id });
     res.json(collections);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -26,7 +26,7 @@ export const getMyCollections = async (req, res) => {
 
 export const updateCollection = async (req, res) => {
   try {
-    const collection = await Collection.findOneAndUpdate(
+    const collection = await NewCollection.findOneAndUpdate(
       { _id: req.params.id, createdBy: req.user.id },
       req.body,
       { new: true }
@@ -40,7 +40,7 @@ export const updateCollection = async (req, res) => {
 
 export const deleteCollection = async (req, res) => {
   try {
-    const collection = await Collection.findOneAndDelete({
+    const collection = await NewCollection.findOneAndDelete({
       _id: req.params.id,
       createdBy: req.user.id,
     });

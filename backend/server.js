@@ -3,7 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import ConnectDB from "./config/db.js";
 import TeacherRouter from "./routes/teacherRoutes.js";
-import collectionRouter from "./routes/collectionRoutes.js";
+import CollectionRouter from "./routes/collectionRoutes.js";
+import StudentRouter from "./routes/studentRoutes.js";
+import AdminRouter from "./routes/adminRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -17,7 +19,10 @@ app.get("/ping", (req, res) => {
 });
 
 app.use("/api/v1/teacher", TeacherRouter);
-app.use("/api/v1/collection",collectionRouter)
+app.use("/api/v1/collection",CollectionRouter);
+app.use("/api/v1/admin",AdminRouter);
+app.use("/api/v1/student",StudentRouter);
+
 
 app.listen(process.env.PORT, () => {
   console.log(`✅ Backend running at http://localhost:${process.env.PORT}`);
