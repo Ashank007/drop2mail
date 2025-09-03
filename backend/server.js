@@ -6,6 +6,7 @@ import TeacherRouter from "./routes/teacherRoutes.js";
 import CollectionRouter from "./routes/collectionRoutes.js";
 import StudentRouter from "./routes/studentRoutes.js";
 import AdminRouter from "./routes/adminRoutes.js";
+import EmailRouter from "./routes/emailRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -22,7 +23,7 @@ app.use("/api/v1/teacher", TeacherRouter);
 app.use("/api/v1/collection",CollectionRouter);
 app.use("/api/v1/admin",AdminRouter);
 app.use("/api/v1/student",StudentRouter);
-
+app.use("/api/v1/email",EmailRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`✅ Backend running at http://localhost:${process.env.PORT}`);
