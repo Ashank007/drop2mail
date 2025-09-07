@@ -1,67 +1,58 @@
 import { useState } from "react";
-import CollectionList from "./components/CollectionList";
-import StudentForm from "./components/StudentForm";
-import StudentList from "./components/StudentList";
+import TabsLayout from "./components/TabsLayout";
+import CollectionsTab from "./components/tabs/CollectionsTab";
+import StudentsTab from "./components/tabs/StudentsTab";
+import EmailTab from "./components/tabs/EmailTab";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("collections");
+  // Centralized states
   const [students, setStudents] = useState([]);
+  const [collections, setCollections] = useState([
+    { id: "c1", name: "Group A", students: [] },
+    { id: "c2", name: "Group B", students: [] },
+  ]);
 
-  // Add new student
-  const addStudent = (student) => {
-    setStudents([...students, { id: Date.now(), ...student }]);
-  };
-
-  // Delete student
-  const deleteStudent = (id) => {
-    setStudents(students.filter((s) => s.id !== id));
-  };
-
-  // Edit student
-  const editStudent = (id, updated) => {
-    setStudents(students.map((s) => (s.id === id ? { ...s, ...updated } : s)));
-  };
+  // Tabs config
+  const tabs = [
+    {
+      id: "collections",
+      label: "Collections",
+      component: (
+        <CollectionsTab
+          students={students}
+          collections={collections}
+          setStudents={setStudents}
+          setCollections={setCollections}
+        />
+      ),
+    },
+    {
+      id: "students",
+      label: "Students",
+      component: (
+        <StudentsTab
+          students={students}
+          setStudents={setStudents}
+          collections={collections}
+          setCollections={setCollections}
+        />
+      ),
+    },
+    {
+      id: "email",
+      label: "Email",
+      component: (
+        <EmailTab
+          students={students}
+          collections={collections}
+        />
+      ),
+    },
+  ];
 
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-50">
-      {/* Tabs */}
-      <div className="flex bg-white shadow-md p-3 gap-4">
-        <button
-          onClick={() => setActiveTab("collections")}
-          className={`px-4 py-2 rounded-lg font-medium ${
-            activeTab === "collections"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 text-gray-700"
-          }`}
-        >
-          Collections
-        </button>
-        <button
-          onClick={() => setActiveTab("students")}
-          className={`px-4 py-2 rounded-lg font-medium ${
-            activeTab === "students"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 text-gray-700"
-          }`}
-        >
-          Students
-        </button>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
-        {activeTab === "collections" && <CollectionList />}
-        {activeTab === "students" && (
-          <div className="max-w-3xl mx-auto space-y-6">
-            <StudentForm addStudent={addStudent} />
-            <StudentList
-              students={students}
-              deleteStudent={deleteStudent}
-              editStudent={editStudent}
-            />
-          </div>
-        )}
-      </div>
+      <TabsLayout tabs={tabs} />
     </div>
   );
 }
