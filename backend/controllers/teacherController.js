@@ -1,4 +1,6 @@
 import Teacher from "../models/Teacher.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const registerTeacher = async (req, res) => {
   try {
