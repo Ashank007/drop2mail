@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
-
+import Teacher from "../models/Teacher.js";
+import Student from "../models/Student.js";
+import Collections from "../models/Collections.js";
 
 const register = async (req, res) => {
   try {
@@ -37,4 +39,24 @@ const login = async (req, res) => {
   }
 }
 
-export { register, login };
+const getStats = async (req, res) => {
+  try {
+    const teachersCount = await Teacher.countDocuments();
+    const studentsCount = await Student.countDocuments();
+    const collectionsCount = await Collections.countDocuments();
+
+    const emailsSent = 0;
+
+    res.json({
+      teachers: teachersCount,
+      students: studentsCount,
+      collections: collectionsCount,
+      emails: emailsSent,
+    });
+  } catch (err) {
+    console.error("Error fetching stats:", err);
+    res.status(500).json({ message: "Server error while fetching stats" });
+  }
+};
+
+export { register, login, getStats };

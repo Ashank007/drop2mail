@@ -5,7 +5,7 @@ import {
   updateCollection,
   deleteCollection,
 } from "../controllers/collectionController.js";
-import { auth } from "../middleware/auth.js";
+import  auth  from "../middleware/auth.js";
 
 const CollectionRouter = express.Router();
 

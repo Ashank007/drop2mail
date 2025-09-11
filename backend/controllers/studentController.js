@@ -1,5 +1,5 @@
 import Student from "../models/Student.js";
-import { auth } from "../middleware/auth.js";
+import  auth  from "../middleware/auth.js";
 
 const addstudent = async(req,res) => {
   try {
