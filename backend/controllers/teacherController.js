@@ -31,4 +31,42 @@ export const loginTeacher = async (req, res) => {
 
 };
 
+export const getTeachers = async (req, res) => {
+  try {
+    const teachers = await Teacher.find().select("-password"); 
+    res.json(teachers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
+export const updateTeacher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+
+    let updateData = { name, email };
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const teacher = await Teacher.findByIdAndUpdate(id, updateData, { new: true }).select("-password");
+    if (!teacher) return res.status(404).json({ error: "Teacher not found" });
+
+    res.json({ message: "Teacher updated successfully", teacher });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const deleteTeacher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const teacher = await Teacher.findByIdAndDelete(id);
+    if (!teacher) return res.status(404).json({ error: "Teacher not found" });
+
+    res.json({ message: "Teacher deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

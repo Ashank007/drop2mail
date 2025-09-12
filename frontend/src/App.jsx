@@ -3,6 +3,7 @@ import TeacherLogin from "./pages/TeacherLogin";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminTeachers from  "./pages/AdminTeachers"
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       {/* Admin Routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/teachers" element={<AdminTeachers />} />
 
       {/* Default redirect */}
       <Route path="*" element={<Navigate to="/teacher/login" replace />} />
