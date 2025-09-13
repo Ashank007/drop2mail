@@ -1,9 +1,8 @@
 import Student from "../models/Student.js";
-import  auth  from "../middleware/auth.js";
 
 const addstudent = async(req,res) => {
   try {
-    if (req.user.role !== "Admin") return res.status(403).json({ error: "Access denied" });
+    if (req.user.role !== "admin") return res.status(403).json({ error: "Access denied" });
     const { name, rollNo, email } = req.body;
     const student = new Student({ name, rollNo, email });
     await student.save();
@@ -15,7 +14,7 @@ const addstudent = async(req,res) => {
 
 const getallstudents = async(req,res) => {
   try {
-    if (req.user.role !== "Admin") return res.status(403).json({ error: "Access denied" });
+    if (req.user.role !== "admin") return res.status(403).json({ error: "Access denied" });
     const students = await Student.find();
     res.json(students);
   } catch (error) {
@@ -23,4 +22,43 @@ const getallstudents = async(req,res) => {
   }
 }
 
-export{addstudent,getallstudents};
+const updateStudent = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") 
+      return res.status(403).json({ error: "Access denied" });
+
+    const { id } = req.params;
+    const { name, rollNo, email } = req.body;
+
+    const student = await Student.findByIdAndUpdate(
+      id,
+      { name, rollNo, email },
+      { new: true }
+    );
+
+    if (!student) return res.status(404).json({ error: "Student not found" });
+
+    res.json({ message: "Student updated successfully", student });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const deleteStudent = async (req, res) => {
+  try {
+    if (req.user.role !== "admin ") 
+      return res.status(403).json({ error: "Access denied" });
+
+    const { id } = req.params;
+    const student = await Student.findByIdAndDelete(id);
+
+    if (!student) return res.status(404).json({ error: "Student not found" });
+
+    res.json({ message: "Student deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+export{addstudent,getallstudents,updateStudent,deleteStudent};
