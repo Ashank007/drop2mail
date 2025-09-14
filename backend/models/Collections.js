@@ -5,13 +5,18 @@ const collectionSchema = new mongoose.Schema({
   description: String,
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "role",
+    refPath: "creatorModel",
     required: true,
   },
-  role: { type: String, enum: ["Teacher", "Admin"], required: true },
+  creatorModel: {
+    type: String,
+    required: true,
+    enum: ["Admin", "Teacher"],
+  },
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
-  isAdminCollection: { type: Boolean, default: false }, 
-}, { timestamps: true });
+  teachers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Teacher" }],
+  isAdminCollection: { type: Boolean, default: false },
+}, { versionKey:false,timestamps: true });
 
 const NewCollection = mongoose.model("Collection", collectionSchema);
 
