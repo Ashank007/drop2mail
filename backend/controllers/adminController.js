@@ -4,6 +4,7 @@ import Admin from "../models/Admin.js";
 import Teacher from "../models/Teacher.js";
 import Student from "../models/Student.js";
 import Collections from "../models/Collections.js";
+import EmailLog from "../models/EmailLog.js";
 
 const register = async (req, res) => {
   try {
@@ -44,8 +45,7 @@ const getStats = async (req, res) => {
     const teachersCount = await Teacher.countDocuments();
     const studentsCount = await Student.countDocuments();
     const collectionsCount = await Collections.countDocuments();
-
-    const emailsSent = 0;
+    const emailsSent = await EmailLog.countDocuments();
 
     res.json({
       teachers: teachersCount,

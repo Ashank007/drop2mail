@@ -73,14 +73,7 @@ export default function AdminDashboard() {
           >
             <FolderKanban size={18} /> Collections
           </button>
-          <button
-            onClick={() => navigate("/admin/emails")}
-            className="flex items-center gap-2 hover:bg-green-600 p-2 rounded w-full"
-          >
-            <Mail size={18} /> Emails
-          </button>
         </nav>
-
         <button
           onClick={handleLogout}
           className="bg-red-500 hover:bg-red-600 w-full py-2 rounded font-semibold flex items-center justify-center gap-2"
