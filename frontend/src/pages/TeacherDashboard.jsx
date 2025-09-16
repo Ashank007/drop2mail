@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TabsLayout from "../components/TabsLayout";
 import StudentsTab from "../components/tabs/StudentsTab";
+import TeacherStudentsTab from "../components/tabs/TeachersStudentTab";
 import CollectionsTab from "../components/tabs/CollectionsTab";
 import EmailTab from "../components/tabs/EmailTab";
 
@@ -17,11 +18,7 @@ export default function TeacherDashboard() {
       id: "students",
       label: "Students",
       component: (
-        <StudentsTab
-          students={students}
-          setStudents={setStudents}
-          collections={collections}
-          setCollections={setCollections}
+        <TeacherStudentsTab
         />
       ),
     },

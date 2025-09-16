@@ -2,7 +2,6 @@ import Student from "../models/Student.js";
 
 const addstudent = async(req,res) => {
   try {
-    if (req.user.role !== "admin") return res.status(403).json({ error: "Access denied" });
     const { name, rollNo, email } = req.body;
     const student = new Student({ name, rollNo, email });
     await student.save();
@@ -14,7 +13,6 @@ const addstudent = async(req,res) => {
 
 const getallstudents = async(req,res) => {
   try {
-    if (req.user.role !== "admin") return res.status(403).json({ error: "Access denied" });
     const students = await Student.find();
     res.json(students);
   } catch (error) {
@@ -24,9 +22,6 @@ const getallstudents = async(req,res) => {
 
 const updateStudent = async (req, res) => {
   try {
-    if (req.user.role !== "admin") 
-      return res.status(403).json({ error: "Access denied" });
-
     const { id } = req.params;
     const { name, rollNo, email } = req.body;
 
@@ -46,9 +41,6 @@ const updateStudent = async (req, res) => {
 
 const deleteStudent = async (req, res) => {
   try {
-    if (req.user.role !== "admin ") 
-      return res.status(403).json({ error: "Access denied" });
-
     const { id } = req.params;
     const student = await Student.findByIdAndDelete(id);
 
