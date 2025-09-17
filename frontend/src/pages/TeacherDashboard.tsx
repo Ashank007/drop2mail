@@ -1,32 +1,47 @@
 import { useState } from "react";
 import TabsLayout from "../components/TabsLayout";
-import StudentsTab from "../components/tabs/StudentsTab";
+import TeacherCollectionTab from "../components/tabs/TeachersCollectionTab";
 import TeacherStudentsTab from "../components/tabs/TeachersStudentTab";
-import CollectionsTab from "../components/tabs/CollectionsTab";
 import EmailTab from "../components/tabs/EmailTab";
+
+// ✅ Type definitions
+interface Student {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface Collection {
+  id: string;
+  name: string;
+  students: Student[];
+}
+
+interface TabItem {
+  id: string;
+  label: string;
+  component: JSX.Element;
+}
 
 export default function TeacherDashboard() {
   // Centralized states (sirf Teacher ke liye)
-  const [students, setStudents] = useState([]);
-  const [collections, setCollections] = useState([
+  const [students, setStudents] = useState<Student[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([
     { id: "c1", name: "Group A", students: [] },
     { id: "c2", name: "Group B", students: [] },
   ]);
 
-  const tabs = [
+  const tabs: TabItem[] = [
     {
       id: "students",
       label: "Students",
-      component: (
-        <TeacherStudentsTab
-        />
-      ),
+      component: <TeacherStudentsTab />,
     },
     {
       id: "collections",
       label: "Collections",
       component: (
-        <CollectionsTab
+        <TeacherCollectionTab
           students={students}
           collections={collections}
           setCollections={setCollections}
@@ -36,9 +51,7 @@ export default function TeacherDashboard() {
     {
       id: "email",
       label: "Email",
-      component: (
-        <EmailTab students={students} collections={collections} />
-      ),
+      component: <EmailTab students={students} collections={collections} />,
     },
   ];
 

@@ -8,7 +8,7 @@ TeacherRouter.post('/register', registerTeacher)
 TeacherRouter.post('/login', loginTeacher)
 
 
-TeacherRouter.get("/", auth(["admin"]), getTeachers);
+TeacherRouter.get("/", auth(["admin","teacher"]), getTeachers);
 TeacherRouter.put("/:id", auth(["admin"]), updateTeacher);
 TeacherRouter.delete("/:id", auth(["admin"]), deleteTeacher);
 

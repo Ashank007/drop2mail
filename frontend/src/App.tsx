@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+
 import TeacherLogin from "./pages/TeacherLogin";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminTeachers from  "./pages/AdminTeachers"
+import AdminTeachers from "./pages/AdminTeachers";
 import AdminStudents from "./pages/AdminStudents";
-import AdminCollections from "./pages/AdminCollection"
+import AdminCollections from "./pages/AdminCollection";
 
 export default function App() {
   return (
@@ -20,7 +21,6 @@ export default function App() {
       <Route path="/admin/students" element={<AdminStudents />} />
       <Route path="/admin/teachers" element={<AdminTeachers />} />
       <Route path="/admin/collections" element={<AdminCollections />} />
-
 
       {/* Default redirect */}
       <Route path="*" element={<Navigate to="/teacher/login" replace />} />
