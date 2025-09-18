@@ -1,44 +1,83 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface Collection {
+  _id: string;
+  title: string;
+  students: { email: string; name?: string }[];
+  teachers: { email: string; name?: string }[];
+}
 
 export default function EmailTab() {
-  const [collections] = useState([
-    { id: 1, title: "Math Group", students: ["aman@example.com", "priya@example.com"] },
-    { id: 2, title: "Physics Group", students: ["rahul@example.com"] },
-  ]);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
 
+  const token =
+    localStorage.getItem("teacherToken") || localStorage.getItem("adminToken");
+  const API_BASE_URL = "http://localhost:5000/api/v1";
+
+  // --- Fetch collections on load ---
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/collection/my`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        console.log("Collections API response:", data);
+        setCollections(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("❌ Error fetching collections:", err);
+        setCollections([]);
+      }
+    };
+
+    if (token) fetchCollections();
+  }, [token]);
+
+  // --- Drag & Drop logic ---
   const onDrop = (ev: React.DragEvent<HTMLDivElement>) => {
     ev.preventDefault();
     const data = ev.dataTransfer.getData("text");
-    const collection = collections.find((c) => c.id.toString() === data);
+    const collection = collections.find((c) => c._id === data);
+
     if (collection) {
-      setSelectedEmails((prev) => [...prev, ...collection.students]);
+      const newEmails = [
+        ...collection.students.map((s) => s.email),
+        ...collection.teachers.map((t) => t.email),
+      ];
+
+      setSelectedEmails((prev) => Array.from(new Set([...prev, ...newEmails]))); // unique emails
     }
   };
 
   const onDragOver = (ev: React.DragEvent<HTMLDivElement>) => ev.preventDefault();
 
   const sendEmail = () => {
-    alert("Sending email to:\n" + selectedEmails.join(", "));
+    alert("📧 Sending email to:\n" + selectedEmails.join(", "));
     setSelectedEmails([]);
   };
 
+  // --- UI ---
   return (
     <div className="flex gap-6">
       {/* Collections list */}
       <div className="w-1/3 p-4 border rounded-lg bg-white shadow">
         <h2 className="font-semibold mb-4">Drag Collections</h2>
-        {collections.map((c) => (
-          <div
-            key={c.id}
-            draggable
-            onDragStart={(e) => e.dataTransfer.setData("text", c.id.toString())}
-            className="p-2 mb-2 border rounded bg-gray-100 cursor-grab"
-          >
-            {c.title}
-          </div>
-        ))}
+        {collections.length > 0 ? (
+          collections.map((c) => (
+            <div
+              key={c._id}
+              draggable
+              onDragStart={(e) => e.dataTransfer.setData("text", c._id)}
+              className="p-2 mb-2 border rounded bg-gray-100 cursor-grab hover:bg-gray-200 transition"
+            >
+              {c.title}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-400 text-sm">No collections found</p>
+        )}
       </div>
 
       {/* Drop area */}
@@ -51,7 +90,7 @@ export default function EmailTab() {
         {selectedEmails.length > 0 ? (
           <div>
             <p className="mb-2 text-sm text-gray-600">Recipients:</p>
-            <ul className="mb-4">
+            <ul className="mb-4 list-disc pl-5">
               {selectedEmails.map((email, i) => (
                 <li key={i} className="text-sm">
                   {email}
@@ -60,7 +99,7 @@ export default function EmailTab() {
             </ul>
             <button
               onClick={sendEmail}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
               Send Email
             </button>
