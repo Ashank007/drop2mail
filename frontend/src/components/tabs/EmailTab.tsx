@@ -4,19 +4,22 @@ import { useEffect, useState } from "react";
 interface Collection {
   _id: string;
   title: string;
-  students: { email: string; name?: string }[];
-  teachers: { email: string; name?: string }[];
+  students: { _id: string; email: string; name?: string }[];
+  teachers: { _id: string; email: string; name?: string }[];
 }
 
 export default function EmailTab() {
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const token =
     localStorage.getItem("teacherToken") || localStorage.getItem("adminToken");
   const API_BASE_URL = "http://localhost:5000/api/v1";
 
-  // --- Fetch collections on load ---
+  // --- Fetch collections ---
   useEffect(() => {
     const fetchCollections = async () => {
       try {
@@ -24,7 +27,6 @@ export default function EmailTab() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        console.log("Collections API response:", data);
         setCollections(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("❌ Error fetching collections:", err);
@@ -42,20 +44,54 @@ export default function EmailTab() {
     const collection = collections.find((c) => c._id === data);
 
     if (collection) {
-      const newEmails = [
-        ...collection.students.map((s) => s.email),
-        ...collection.teachers.map((t) => t.email),
-      ];
-
-      setSelectedEmails((prev) => Array.from(new Set([...prev, ...newEmails]))); // unique emails
+      const newIds = collection.students.map((s) => s._id);
+      setSelectedStudentIds((prev) => Array.from(new Set([...prev, ...newIds])));
     }
   };
 
   const onDragOver = (ev: React.DragEvent<HTMLDivElement>) => ev.preventDefault();
 
-  const sendEmail = () => {
-    alert("📧 Sending email to:\n" + selectedEmails.join(", "));
-    setSelectedEmails([]);
+  // --- Send Email ---
+  const sendEmail = async () => {
+    if (selectedStudentIds.length === 0) {
+      alert("⚠️ No recipients selected!");
+      return;
+    }
+    if (!subject || !message) {
+      alert("⚠️ Please enter subject and message!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/email/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          studentIds: selectedStudentIds,
+          subject,
+          message,
+        }),
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        alert(`✅ Email sent to: ${result.sentTo.join(", ")}`);
+        setSelectedStudentIds([]);
+        setSubject("");
+        setMessage("");
+      } else {
+        alert("❌ Error: " + result.error);
+      }
+    } catch (err) {
+      console.error("❌ Error sending email:", err);
+      alert("❌ Failed to send email!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // --- UI ---
@@ -80,28 +116,44 @@ export default function EmailTab() {
         )}
       </div>
 
-      {/* Drop area */}
+      {/* Drop area + Email form */}
       <div
         onDrop={onDrop}
         onDragOver={onDragOver}
         className="flex-1 p-4 border-2 border-dashed rounded-lg bg-gray-50"
       >
         <h2 className="font-semibold mb-4">Drop here to Email</h2>
-        {selectedEmails.length > 0 ? (
+
+        {selectedStudentIds.length > 0 ? (
           <div>
-            <p className="mb-2 text-sm text-gray-600">Recipients:</p>
-            <ul className="mb-4 list-disc pl-5">
-              {selectedEmails.map((email, i) => (
-                <li key={i} className="text-sm">
-                  {email}
-                </li>
-              ))}
-            </ul>
+            <p className="mb-2 text-sm text-gray-600">
+              Recipients: {selectedStudentIds.length} students
+            </p>
+
+            {/* Subject */}
+            <input
+              type="text"
+              placeholder="Subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="w-full mb-2 p-2 border rounded"
+            />
+
+            {/* Message */}
+            <textarea
+              placeholder="Message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full mb-4 p-2 border rounded"
+              rows={4}
+            />
+
             <button
               onClick={sendEmail}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              Send Email
+              {loading ? "Sending..." : "Send Email"}
             </button>
           </div>
         ) : (
